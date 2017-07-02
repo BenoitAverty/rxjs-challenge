@@ -21,7 +21,7 @@ import {
 } from 'simulation/constants'
 
 /**
- * Draw the crossroad.
+ * Draw the crossroad. This should be drawn on a separate canvas of the simulation because it's not going to move.
  */
 export function drawCrossroad(context) {
   // Draw the background
@@ -84,18 +84,25 @@ export function drawCrossroad(context) {
   context.restore()
 }
 
-const drawCar = curry(function(context, { x, y }) {
-  context.strokeStyle = CARS_COLOR
-  context.lineWidth = CARS_WIDTH
-  context.beginPath()
-  context.moveTo(x-CARS_LENGTH/2, y)
-  context.lineTo(x+CARS_LENGTH/2, y)
-  context.stroke()
+/**
+ * Draw a single car. The car is an object with x,y coordinates and a direction in radians.
+ */
+const drawCar = curry(function(context, { x, y, direction }) {
+  context.fillStyle = CARS_COLOR
+  context.save()
+  context.translate(x,y)
+  context.rotate(direction)
+  context.fillRect(-CARS_LENGTH/2, -CARS_WIDTH/2, CARS_LENGTH, CARS_WIDTH)
+  context.restore()
 })
 
+/**
+ * Draw the given simulation state on a canvas context. See the destructuring at the begining of
+ * the function to see what's contained in the simulation.
+ */
 export const drawSimulation = curry(function(context, simulation) {
   const {
-    cars
+    cars // An array containing cars objects.
   } = simulation
 
   // Clear the previously rendered simulation

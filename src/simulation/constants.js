@@ -1,15 +1,15 @@
-export const ANIMATION_SIZE = 700
+export const ANIMATION_SIZE = 800
 
 // Crossroad topology constants
-export const ROAD_WIDTH = 160
-export const SIDEWAY_WIDTH = 40
-export const CROSSWALK_WIDTH = 80
+export const ROAD_WIDTH = 140
+export const SIDEWAY_WIDTH = 35
+export const CROSSWALK_WIDTH = 60
 export const CROSSWALK_LINES_COUNT = 5
 export const CROSSWALK_LINES_GAP_RATIO = 2
 export const CROSSWALK_OFFSET = 10
 export const MARKINGS_WIDTH = 5
-export const MARKINGS_LENGTH = 15
-export const MARKINGS_LINES_GAP_RATIO = 3
+export const MARKINGS_LENGTH = 30
+export const MARKINGS_LINES_GAP_RATIO = 2
 
 // Crossroad style constants
 export const BACKGROUND_COLOR = '#617B4B'
