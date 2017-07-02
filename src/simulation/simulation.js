@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs'
-import {defaultTo, reject, isNil} from 'ramda'
+import {defaultTo, reject, isNil, ifElse, always, objOf, equals} from 'ramda'
 
 import {ANIMATION_SIZE, CARS_LENGTH, CARS_SPEED, DIRECTION_RIGHT} from 'simulation/constants'
 
@@ -22,9 +22,11 @@ function SimulationState(cars) {
 export function createSimulation(startRequest$, resetRequest$) {
   console.log('Creating simulation')
 
-  const reset$ = resetRequest$
-    .do(e => console.log('Reset request received'))
-    .mapTo({ started: false })
+  const onOffSwitch$ = Observable
+    .merge(
+      startRequest$.mapTo(true),
+      resetRequest$.mapTo(false),
+    )
 
   const leftToRightMovement$ = Observable.interval(1000/60)
     .startWith({ x: -CARS_LENGTH/2, y: 435})
@@ -41,10 +43,9 @@ export function createSimulation(startRequest$, resetRequest$) {
     (c1, c2) => reject(isNil, [c1, c2])
   )
 
-  return startRequest$
-    .flatMapTo(cars$)
-    .map(SimulationState)
+  const simulation$ = cars$.map(SimulationState)
+
+  return onOffSwitch$
+    .switchMap(ifElse(equals(true), always(simulation$), () => Observable.of({ started: false })))
     .startWith({ started: false })
-    .takeUntil(reset$)
-    .merge(reset$)
 }
