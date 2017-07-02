@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs'
 import {defaultTo, reject, isNil, ifElse, always, objOf, equals} from 'ramda'
 
-import {ANIMATION_SIZE, CARS_LENGTH, CARS_SPEED, DIRECTION_RIGHT} from 'simulation/constants'
+import {leftToRightCar, topToRightCar} from 'simulation/cars'
 
 /**
  * Construct a simulation state with all the given elements. Returns an empty simulation
@@ -28,19 +28,12 @@ export function createSimulation(startRequest$, resetRequest$) {
       resetRequest$.mapTo(false),
     )
 
-  const leftToRightMovement$ = Observable.interval(1000/60)
-    .startWith({ x: -CARS_LENGTH/2, y: 435})
-    .scan(({ x, y }) => ({ x: x+CARS_SPEED, y }))
-
-  const leftToRightCar$ = leftToRightMovement$
-    .takeWhile(({ x }) => x < ANIMATION_SIZE+CARS_LENGTH)
-    .map(coord => ({ ...coord, direction: DIRECTION_RIGHT }))
-    .concat(Observable.of(null))
 
   const cars$ = Observable.combineLatest(
-    leftToRightCar$,
-    leftToRightCar$.delay(500).startWith(null),
-    (c1, c2) => reject(isNil, [c1, c2])
+    leftToRightCar(),
+    leftToRightCar().delay(500).startWith(null),
+    topToRightCar(),
+    (...cars) => reject(isNil, cars)
   )
 
   const simulation$ = cars$.map(SimulationState)

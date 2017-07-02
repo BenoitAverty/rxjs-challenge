@@ -1,4 +1,5 @@
 export const ANIMATION_SIZE = 800
+export const ANIMATION_FRAME = 1000/60
 
 // Crossroad topology constants
 export const ROAD_WIDTH = 140
@@ -25,3 +26,4 @@ export const CARS_COLOR = 'blue'
 // Simulation constants
 export const CARS_SPEED = 10 // pixels per frame
 export const DIRECTION_RIGHT = 0 // radians
+export const DIRECTION_BOTTOM = 3*Math.PI/2 // radians
