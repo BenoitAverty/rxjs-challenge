@@ -6,7 +6,7 @@ const ROAD_WIDTH = 160
 const SIDEWAY_WIDTH = 40
 const CROSSWALK_WIDTH = 80
 const CROSSWALK_LINES_COUNT = 5
-const CROSSROAD_LINES_GAP_RATIO = 2
+const CROSSWALK_LINES_GAP_RATIO = 2
 const CROSSWALK_OFFSET = 10
 const MARKINGS_WIDTH = 5
 const MARKINGS_LENGTH = 15
@@ -34,56 +34,50 @@ function drawCrossroad(context) {
   context.fillRect(0, (ANIMATION_SIZE-ROAD_WIDTH) / 2, ANIMATION_SIZE, ROAD_WIDTH)
   context.fillRect((ANIMATION_SIZE-ROAD_WIDTH) / 2, 0, ROAD_WIDTH, ANIMATION_SIZE)
 
-  // Draw the crosswalks
-  const lineWidth = (CROSSROAD_LINES_GAP_RATIO*ROAD_WIDTH) / (CROSSROAD_LINES_GAP_RATIO*CROSSWALK_LINES_COUNT+CROSSWALK_LINES_COUNT+1)
-  const lineGap = lineWidth/CROSSROAD_LINES_GAP_RATIO
+  // Draw the markings
+  const lineWidth = (CROSSWALK_LINES_GAP_RATIO*ROAD_WIDTH) / (CROSSWALK_LINES_GAP_RATIO*CROSSWALK_LINES_COUNT+CROSSWALK_LINES_COUNT+1)
+  const gapWidth = lineWidth/CROSSWALK_LINES_GAP_RATIO
+  const crosswalk = [
+    (ANIMATION_SIZE-ROAD_WIDTH) / 2 - CROSSWALK_LINES_GAP_RATIO - CROSSWALK_WIDTH/2 - CROSSWALK_OFFSET,
+    (ANIMATION_SIZE-ROAD_WIDTH) / 2 + gapWidth,
+    (ANIMATION_SIZE-ROAD_WIDTH) / 2 - CROSSWALK_LINES_GAP_RATIO - CROSSWALK_WIDTH/2 - CROSSWALK_OFFSET,
+    (ANIMATION_SIZE-ROAD_WIDTH) / 2 + gapWidth + ROAD_WIDTH - 2*gapWidth,
+  ]
+  const crosswalkDash = [lineWidth, gapWidth]
 
-  context.lineWidth = lineWidth
-  context.strokeStyle = MARKINGS_COLOR
-  const crosswalkLeft = map(
-    idx => [
-      (ANIMATION_SIZE-ROAD_WIDTH) / 2 - CROSSWALK_WIDTH - CROSSWALK_OFFSET,
-      (ANIMATION_SIZE-ROAD_WIDTH) / 2 + lineWidth/2 + lineGap + (lineWidth+lineGap)*idx,
-      (ANIMATION_SIZE-ROAD_WIDTH) / 2 - CROSSWALK_OFFSET,
-      (ANIMATION_SIZE-ROAD_WIDTH) / 2 + lineWidth/2 + lineGap + (lineWidth+lineGap)*idx,
-    ],
-    range(0, CROSSWALK_LINES_COUNT)
-  )
-  const crosswalkRight = map(([x1, y1, x2, y2]) => [x2+ROAD_WIDTH+2*CROSSWALK_OFFSET, y1, x2+CROSSWALK_WIDTH+ROAD_WIDTH+2*CROSSWALK_OFFSET, y2], crosswalkLeft)
-  const crosswalkTop = map(([x1, y1, x2, y2]) => ([y1, x1, y2, x2]), crosswalkLeft)
-  const crosswalkBottom = map(([x1, y1, x2, y2]) => ([y1, x1, y2, x2]), crosswalkRight)
+  const midline = [
+    0,
+    ANIMATION_SIZE/2,
+    (ANIMATION_SIZE-ROAD_WIDTH) / 2 - CROSSWALK_WIDTH - 2*CROSSWALK_OFFSET,
+    ANIMATION_SIZE/2
+  ]
+  const midlineDash = [MARKINGS_LENGTH, MARKINGS_LENGTH/MARKINGS_LINES_GAP_RATIO]
 
-  const crosswalk = reduce(concat, [], [crosswalkLeft, crosswalkRight, crosswalkTop, crosswalkBottom])
-  crosswalk.forEach(
-    ([x1, y1, x2, y2]) => {
-      console.log(`drawing ${x1},${y1} ${x2},${y2}`)
-      context.beginPath()
-      context.moveTo(x1, y1)
-      context.lineTo(x2, y2)
-      context.stroke()
-    }
-  )
+  context.save()
+  for(let i = 0; i < 4; ++i) {
+    context.strokeStyle = MARKINGS_COLOR
+    context.lineWidth = MARKINGS_WIDTH
+    context.setLineDash(midlineDash)
 
-  // draw the markings
-  context.lineWidth = MARKINGS_WIDTH
-  context.strokeStyle = MARKINGS_COLOR
-  context.setLineDash([MARKINGS_LENGTH, MARKINGS_LENGTH/MARKINGS_LINES_GAP_RATIO])
+    const [midlineX1, midlineY1, midlineX2, midlineY2] = midline
+    context.beginPath()
+    context.moveTo(midlineX1, midlineY1)
+    context.lineTo(midlineX2, midlineY2)
+    context.stroke()
 
-  const markingsLeft = [[0, ANIMATION_SIZE/2, (ANIMATION_SIZE-ROAD_WIDTH) / 2 - CROSSWALK_WIDTH - 2*CROSSWALK_OFFSET, ANIMATION_SIZE/2]]
-  const markingsRight = map(([x1, y1, x2, y2]) => [ANIMATION_SIZE-x2, y1, ANIMATION_SIZE, y2], markingsLeft)
-  const markingsTop = map(([x1, y1, x2, y2]) => ([y1, x1, y2, x2]), markingsLeft)
-  const markingsBottom = map(([x1, y1, x2, y2]) => ([y1, x1, y2, x2]), markingsRight)
+    context.lineWidth = CROSSWALK_WIDTH
+    context.setLineDash(crosswalkDash)
 
-  const markings = reduce(concat, [], [markingsLeft, markingsRight, markingsTop, markingsBottom])
-  markings.forEach(
-    ([x1, y1, x2, y2]) => {
-      console.log(`drawing ${x1},${y1} ${x2},${y2}`)
-      context.beginPath()
-      context.moveTo(x1, y1)
-      context.lineTo(x2, y2)
-      context.stroke()
-    }
-  )
+    const [crosswalkX1, crosswalkY1, crosswalkX2, crosswalkY2] = crosswalk
+    context.beginPath()
+    context.moveTo(crosswalkX1, crosswalkY1)
+    context.lineTo(crosswalkX2, crosswalkY2)
+    context.stroke()
+
+    context.rotate(Math.PI/2)
+    context.translate(0, -ANIMATION_SIZE)
+  }
+  context.restore()
 }
 
 export default class Simulation extends React.Component {
