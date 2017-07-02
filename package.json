@@ -1,0 +1,38 @@
+{
+  "name": "rxjs-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "prettier-standard src/**/*.js tests/**/*.js",
+    "lint:check": "npm run lint && git diff-files --exit-code --name-status */**/*.js",
+    "dev": "next src/",
+    "build": "next build src/",
+    "start": "next start src/",
+    "prepush": "npm run lint:check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/BenoitAverty/rxjs-challenge.git"
+  },
+  "author": "Benoit AVERTY <benoit.averty@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BenoitAverty/rxjs-challenge/issues"
+  },
+  "homepage": "https://github.com/BenoitAverty/rxjs-challenge#readme",
+  "devDependencies": {
+    "babel-plugin-module-resolver": "^2.7.1",
+    "husky": "^0.14.2",
+    "prettier-standard": "^6.0.0"
+  },
+  "dependencies": {
+    "konva": "^1.6.3",
+    "next": "^2.4.6",
+    "ramda": "^0.24.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-konva": "^1.1.3",
+    "rxjs": "^5.4.1"
+  }
+}
