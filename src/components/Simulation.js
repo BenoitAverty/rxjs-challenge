@@ -23,7 +23,7 @@ export default class Simulation extends React.Component {
     if(this.props.simulation !== null) {
       console.log("Subscribing to a new simulation")
       this.subscription = this.props.simulation
-        .observeOn(Rx.Scheduler.animationFrame)
+        // .observeOn(Rx.Scheduler.animationFrame)
         .subscribe(drawSimulation(this.animationCanvas.getContext('2d')))
     }
     else {

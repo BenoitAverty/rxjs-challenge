@@ -21,3 +21,7 @@ export const MARKINGS_COLOR = '#FFFFFF'
 export const CARS_LENGTH = 70
 export const CARS_WIDTH = 35
 export const CARS_COLOR = 'blue'
+
+// Simulation constants
+export const CARS_SPEED = 10 // pixels per frame
+export const DIRECTION_RIGHT = 0 // radians
