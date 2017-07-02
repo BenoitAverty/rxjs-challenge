@@ -21,6 +21,15 @@ import {
 } from 'simulation/constants'
 
 /**
+ * draw a loading indicator
+ */
+export function drawLoadingIndicator(context) {
+  console.log("Drawing loading indicator")
+  context.fillStyle = 'red'
+  context.fillRect(0,0,ANIMATION_SIZE, ANIMATION_SIZE)
+}
+
+/**
  * Draw the crossroad. This should be drawn on a separate canvas of the simulation because it's not going to move.
  */
 export function drawCrossroad(context) {
@@ -88,6 +97,8 @@ export function drawCrossroad(context) {
  * Draw a single car. The car is an object with x,y coordinates and a direction in radians.
  */
 const drawCar = curry(function(context, { x, y, direction }) {
+  console.log('Drawing a car...')
+
   context.fillStyle = CARS_COLOR
   context.save()
   context.translate(x,y)
@@ -102,11 +113,15 @@ const drawCar = curry(function(context, { x, y, direction }) {
  */
 export const drawSimulation = curry(function(context, simulation) {
   const {
-    cars // An array containing cars objects.
+    started,
+    cars, // An array containing cars objects.
   } = simulation
 
+  console.log('rendering...')
   // Clear the previously rendered simulation
   context.clearRect(0, 0, ANIMATION_SIZE, ANIMATION_SIZE)
 
-  forEach(drawCar(context), cars)
+  if(started) {
+    forEach(drawCar(context), cars)
+  }
 })
