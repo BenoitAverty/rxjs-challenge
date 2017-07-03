@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs'
 import { defaultTo, reject, isNil, ifElse, always, objOf, equals } from 'ramda'
 
-import { leftToRightCar, topToRightCar } from 'simulation/cars'
+import { leftToRightCar, leftToTopCar } from 'simulation/cars'
 
 /**
  * Construct a simulation state with all the given elements. Returns an empty simulation
@@ -28,9 +28,9 @@ export function createSimulation (startRequest$, resetRequest$) {
   )
 
   const cars$ = Observable.combineLatest(
+    leftToRightCar().delay(1000).startWith(null),
     leftToRightCar(),
-    leftToRightCar().delay(500).startWith(null),
-    topToRightCar(),
+    leftToTopCar().delay(500).startWith(null),
     (...cars) => reject(isNil, cars)
   )
 

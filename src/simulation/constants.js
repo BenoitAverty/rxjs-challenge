@@ -24,6 +24,7 @@ export const CARS_WIDTH = 35
 export const CARS_COLOR = 'blue'
 
 // Simulation constants
-export const CARS_SPEED = 10 // pixels per frame
+export const CARS_SPEED = 8 // pixels per frame
 export const DIRECTION_RIGHT = 0 // radians
 export const DIRECTION_BOTTOM = 3 * Math.PI / 2 // radians
+export const DIRECTION_TOP = Math.PI / 2 // radians
