@@ -2,6 +2,7 @@ import { Observable } from 'rxjs'
 import { defaultTo, reject, isNil, ifElse, always, objOf, equals } from 'ramda'
 
 import { leftToRightCar, leftToTopCar } from 'simulation/cars'
+import combineActive from 'utils/combineActive'
 
 /**
  * Construct a simulation state with all the given elements. Returns an empty simulation
@@ -27,14 +28,15 @@ export function createSimulation (startRequest$, resetRequest$) {
     resetRequest$.mapTo(false)
   )
 
-  const cars$ = Observable.combineLatest(
-    leftToRightCar().delay(1000).startWith(null),
-    leftToRightCar(),
-    leftToTopCar().delay(500).startWith(null),
-    (...cars) => reject(isNil, cars)
-  )
+  // Every 400ms, 1/2 probability of a random car appearing.
+  const randomCars$ = Observable.interval(400)
+    .map(Math.random)
+    .filter(n => n < 0.5)
+    .map(n => (n < 0.25 ? leftToRightCar() : leftToTopCar()))
 
-  const simulation$ = cars$.map(SimulationState)
+  const cars$ = combineActive(randomCars$)
+
+  const simulation$ = cars$.map(SimulationState).startWith(SimulationState([]))
 
   return onOffSwitch$
     .switchMap(

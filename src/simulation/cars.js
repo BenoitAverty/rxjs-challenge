@@ -41,14 +41,11 @@ const moveTop = pipe(add(vector(0, -CARS_SPEED)), setDirection(DIRECTION_TOP))
 const leftToRightMovement$ = Observable.interval(ANIMATION_FRAME)
   .startWith({ ...vector(-CARS_LENGTH / 2, 435), direction: DIRECTION_RIGHT })
   .scan(moveRight)
-  .takeWhile(carIsInside)
 
 const leftToTopMovement$ = Observable.interval(ANIMATION_FRAME)
   .startWith({ ...vector(-CARS_LENGTH / 2, 435), direction: DIRECTION_RIGHT })
   .scan(ifElse(isOnVerticalRightLane, moveTop, moveRight))
-  .takeWhile(carIsInside)
 
-export const leftToRightCar = () =>
-  leftToRightMovement$.concat(Observable.of(null))
+export const leftToRightCar = () => leftToRightMovement$.takeWhile(carIsInside)
 
-export const leftToTopCar = () => leftToTopMovement$.concat(Observable.of(null))
+export const leftToTopCar = () => leftToTopMovement$.takeWhile(carIsInside)
